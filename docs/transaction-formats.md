@@ -384,13 +384,6 @@ rather than a byte per transaction. `cuApriori` candidate generation retains sub
 pruning. Support counting avoids materializing transaction-by-candidate-by-item
 temporary arrays. CPU-loaded transactions are transferred to the GPU in bulk.
 
-For the local `jhub` environment, disable user packages to avoid NumPy
-version conflicts:
-
-```bash
-PYTHONNOUSERSITE=1 conda run -n jhub python your_script.py
-```
-
 ## Optional GDS input
 
 Local BIN input defaults to `use_gds="auto"`. When KvikIO, CUDA, and
