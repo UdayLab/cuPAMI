@@ -1,9 +1,29 @@
 # cuPAMI
 
-[PAMI](https://github.com/UdayLab/PAMI) is the main pattern-mining library.
-cuPAMI focuses on CUDA mining with NVIDIA GPUs. Experimental `clApriori`
+[![PyPI](https://img.shields.io/pypi/v/cupami)](https://pypi.org/project/cupami/)
+[![Python](https://img.shields.io/pypi/pyversions/cupami)](https://pypi.org/project/cupami/)
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
+
+cuPAMI mines frequent, periodic, fuzzy, and spatial patterns on the GPU.
+It is the CUDA companion to [PAMI](https://github.com/UdayLab/PAMI), the main
+pattern-mining library, and targets NVIDIA GPUs. Experimental `clApriori`
 also provides an OpenCL backend for AMD-compatible and other OpenCL GPUs.
 This repository is under development.
+
+## Install
+
+```bash
+pip install cupami
+pip install cupy-cuda12x   # choose the CuPy build that matches your CUDA version
+```
+
+CUDA mining requires an NVIDIA GPU and CuPy. Optional features:
+
+| Feature | Package | Extra |
+|---|---|---|
+| Parquet files | `pyarrow` | `cupami[parquet]` |
+| OpenCL backend (`clApriori`) | `pyopencl` | `cupami[opencl]` |
+| GPUDirect Storage | RAPIDS `kvikio` | |
 
 ## Quick start
 
@@ -27,10 +47,17 @@ lengths vary. This generates 10000 transactions and finds patterns appearing in 
 
 Replace `cuApriori` with `cuEclat` or `cuFPGrowth` to use another algorithm.
 See [quickstart.ipynb](quickstart.ipynb) for a runnable example of all three.
-CUDA mining requires CuPy and an NVIDIA GPU. For AMD-compatible OpenCL
-GPUs, see [clApriori](docs/algorithms/clApriori.md). AMD performance is not yet validated.
+For AMD-compatible OpenCL GPUs, see [clApriori](docs/algorithms/clApriori.md).
+AMD performance is not yet validated.
 
-## Timing
+## Inputs and outputs
+
+Every miner takes data and its parameters, and reports patterns, runtime, and memory
+through the same methods.
+
+![Inputs and outputs of a cuPAMI miner](docs/figures/algorithm-io.svg)
+
+*Figure 1. Inputs and outputs shared by every cuPAMI miner.*
 
 ```python
 print("Loading:", miner.getLoadingTime())
@@ -43,32 +70,46 @@ mining covers GPU preparation and search, including initialization on first use.
 Total is loading plus the latest mining time. Generation, idle time, and saving
 are excluded. `getRuntime()` remains the mining-time shorthand.
 
-## Inputs and outputs
-
-![Inputs and outputs of cuPAMI algorithms](docs/figures/algorithm-io.svg)
-
-## GPU loading and mining
-
-![OpenCL alternative and NVIDIA CUDA readiness checks with True and False branches](docs/figures/gpu-setup.svg)
-
-![cuPAMI storage-to-GPU loading paths and mining pipeline](docs/figures/gpu-pipeline.svg)
-
-[Loading formats and GDS details](docs/transaction-formats.md#gpu-loading-and-mining)
-
 ## Algorithms
 
-See the [individual algorithm guides](docs/algorithms/README.md) for inputs, parameters, and examples.
+Each algorithm name links to its guide with inputs, parameters, and examples.
 
-| Data | Algorithms | Parameters |
-|---|---|---|
-| Binary transactional | `cuApriori`, `cuEclat`, `cuFPGrowth`, `clApriori` (OpenCL) | `minSup` |
-| Temporal | `cuPFApriori`, `cuPFEclat`, `cuPFGrowth`, `gPFMiner` | `minSup`, `maxPer` |
-| Partial-periodic temporal | `cuPPPApriori`, `cuPPPEclat` | `minPS`, `period` |
-| Fuzzy CSV | `cuFFIMiner`, `cuMFFIMiner`, `cuMultiFuzzyBaseline` | `minSup` |
-| Spatial CSV + neighbour CSV | `cuSpatialEclat` | `minSup` |
+| Data | Algorithm | Parameters | Notebook |
+|---|---|---|---|
+| Binary transactional | [`cuApriori`](docs/algorithms/cuApriori.md) | `minSup` | [Notebook](notebooks/frequentPattern/cuApriori.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuApriori.ipynb) |
+| Binary transactional | [`cuEclat`](docs/algorithms/cuEclat.md) | `minSup` | [Notebook](notebooks/frequentPattern/cuEclat.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuEclat.ipynb) |
+| Binary transactional | [`cuFPGrowth`](docs/algorithms/cuFPGrowth.md) | `minSup` | [Notebook](notebooks/frequentPattern/cuFPGrowth.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuFPGrowth.ipynb) |
+| Binary transactional (OpenCL, experimental) | [`clApriori`](docs/algorithms/clApriori.md) | `minSup` | [Notebook](notebooks/frequentPattern/clApriori.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/clApriori.ipynb) |
+| Temporal | [`cuPFApriori`](docs/algorithms/cuPFApriori.md) | `minSup`, `maxPer` | [Notebook](notebooks/periodicFrequentPattern/cuPFApriori.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/cuPFApriori.ipynb) |
+| Temporal | [`cuPFEclat`](docs/algorithms/cuPFEclat.md) | `minSup`, `maxPer` | [Notebook](notebooks/periodicFrequentPattern/cuPFEclat.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/cuPFEclat.ipynb) |
+| Temporal | [`cuPFGrowth`](docs/algorithms/cuPFGrowth.md) | `minSup`, `maxPer` | [Notebook](notebooks/periodicFrequentPattern/cuPFGrowth.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/cuPFGrowth.ipynb) |
+| Temporal | [`gPFMiner`](docs/algorithms/gPFMiner.md) | `minSup`, `maxPer` | [Notebook](notebooks/periodicFrequentPattern/gPFMiner.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/gPFMiner.ipynb) |
+| Partial-periodic temporal | [`cuPPPApriori`](docs/algorithms/cuPPPApriori.md) | `minPS`, `period` | [Notebook](notebooks/partialPeriodicPattern/cuPPPApriori.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/partialPeriodicPattern/cuPPPApriori.ipynb) |
+| Partial-periodic temporal | [`cuPPPEclat`](docs/algorithms/cuPPPEclat.md) | `minPS`, `period` | [Notebook](notebooks/partialPeriodicPattern/cuPPPEclat.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/partialPeriodicPattern/cuPPPEclat.ipynb) |
+| Fuzzy CSV | [`cuFFIMiner`](docs/algorithms/cuFFIMiner.md) | `minSup` | [Notebook](notebooks/fuzzyFrequentPattern/cuFFIMiner.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/fuzzyFrequentPattern/cuFFIMiner.ipynb) |
+| Fuzzy CSV | [`cuMFFIMiner`](docs/algorithms/cuMFFIMiner.md) | `minSup` | [Notebook](notebooks/fuzzyFrequentPattern/cuMFFIMiner.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/fuzzyFrequentPattern/cuMFFIMiner.ipynb) |
+| Fuzzy CSV | [`cuMultiFuzzyBaseline`](docs/algorithms/cuMultiFuzzyBaseline.md) | `minSup` | [Notebook](notebooks/fuzzyFrequentPattern/cuMultiFuzzyBaseline.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/fuzzyFrequentPattern/cuMultiFuzzyBaseline.ipynb) |
+| Spatial CSV + neighbour CSV | [`cuSpatialEclat`](docs/algorithms/cuSpatialEclat.md) | `minSup` | [Notebook](notebooks/georeferencedFrequentPattern/cuSpatialEclat.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/georeferencedFrequentPattern/cuSpatialEclat.ipynb) |
 
 Transactional results contain each pattern's support count. Temporal results
 contain `(support, periodicity)`.
+
+## Choosing a backend
+
+![Flowchart for choosing between the CUDA miners, clApriori on OpenCL, and PAMI on the CPU](docs/figures/gpu-setup.svg)
+
+*Figure 2. Choosing a backend.*
+
+The CUDA check passes when CuPy can access the GPU and run a CUDA operation.
+Only `clApriori` supports OpenCL.
+
+## GPU loading and mining
+
+![Storage-to-GPU loading paths and the CUDA mining pipeline](docs/figures/gpu-pipeline.svg)
+
+*Figure 3. CUDA data loading and GPU mining.*
+
+See [loading formats and GDS details](docs/transaction-formats.md#gpu-loading-and-mining).
 
 ## Temporal data
 
@@ -90,7 +131,7 @@ patterns = miner.getPatterns()
 and end gaps. Temporal input rows have a timestamp followed by their items.
 Use `repeatAllowed=True` to allow repeated timestamps and `missingAllowed=True`
 to allow gaps. Set `mergeTimestamps=True` to combine repeated timestamps.
-See the [notebook examples](quickstart.ipynb).
+See the [cuPFEclat notebook](notebooks/periodicFrequentPattern/cuPFEclat.ipynb).
 
 ## Fuzzy data (CSV)
 
@@ -129,7 +170,7 @@ Like PAMI's `SpatialECLAT`, the miner takes item-only transactions and a
 neighbour file. CSV input only; support counting runs on the GPU. See
 [spatial input details](docs/spatial-data.md) and the notebook example.
 
-## Files are optional
+## Working with files
 
 Transactional and temporal miners accept CSV, BIN, and Parquet files.
 Use a file containing the matching type of data:
@@ -163,9 +204,8 @@ print(generator.getMemoryUSS())
 ```
 
 These measure the latest `create()` or direct-to-file generation. RSS/USS are
-snapshots after generation, not peak or generator-only memory; install `psutil`
-for memory reporting (unavailable values return 0). `save()` does not reset them.
-
+snapshots after generation, not peak or generator-only memory; memory reporting
+uses `psutil` (unavailable values return 0). `save()` does not reset them.
 
 Parquet export and temporal Parquet input require PyArrow.
 `TemporalDatabase` also supports all three export formats. See [data formats and GPU loading](docs/transaction-formats.md)
@@ -270,19 +310,16 @@ miners add maximum-gap checks, including the start and end gaps.
    Journal of Systems and Software, 112, 2016, pp. 110–121.
    Section 1 and Example 1.
    [Paper](https://www.tkl.iis.u-tokyo.ac.jp/new/uploads/publication_file/file/744/5-8-2015_final.pdf).
-
 6. Jerry Chun-Wei Lin, Ting Li, Philippe Fournier-Viger and Tzung-Pei Hong.
    **A fast Algorithm for mining fuzzy frequent itemsets.** Journal of
    Intelligent & Fuzzy Systems, 29(6), 2015, pp. 2373–2379.
    DOI: 10.3233/IFS-151936. Definitions 4–5, Strategy 1 and Algorithm 1.
    [Paper](https://www.philippe-fournier-viger.com/spmf/ffiminer.pdf).
-
 7. Jerry Chun-Wei Lin, Ting Li, Philippe Fournier-Viger, Tzung-Pei Hong,
    Jimmy Ming-Tai Wu and Justin Zhan. **Efficient Mining of Multiple Fuzzy
    Frequent Itemsets.** International Journal of Fuzzy Systems, 19(4), 2017,
    pp. 1032–1040; published online in 2016. DOI: 10.1007/s40815-016-0246-1.
    [Paper](https://www.philippe-fournier-viger.com/spmf/mffiminer.pdf).
-
 8. R. Uday Kiran, Sourabh Shrivastava, Philippe Fournier-Viger, Koji Zettsu,
    Masashi Toyoda and Masaru Kitsuregawa. **Discovering Frequent Spatial
    Patterns in Very Large Spatiotemporal Databases.** SIGSPATIAL 2020,
@@ -302,75 +339,18 @@ miners add maximum-gap checks, including the start and end gaps.
   See the [KvikIO API](https://docs.rapids.ai/api/kvikio/stable/api/)
   and [runtime settings](https://docs.rapids.ai/api/kvikio/stable/runtime_settings/).
 - **BIN layout, converter, and temporal CUDA kernels:** implemented in this repository.
-
 - **Fuzzy mining:** strongest-region selection and vertical search follow
   [PAMI FFIMiner](https://github.com/UdayLab/PAMI/blob/48d0c25fb5f1e4ff32e797fa00873033921f1aa7/PAMI/fuzzyFrequentPattern/basic/FFIMiner.py).
   The GPU minimum/reduction approach is adapted from
   [PAMI cuFFIMiner](https://github.com/UdayLab/PAMI/blob/48d0c25fb5f1e4ff32e797fa00873033921f1aa7/PAMI/fuzzyFrequentPattern/cuda/cuFFIMiner.py),
   GPL-3.0, Copyright (C) 2021 Rage Uday Kiran; PAMI credits the CUDA code to
   Mithun Thangaraj. cuPAMI uses float64 memberships and batched depth-first search.
-
 - **Multiple fuzzy regions:** `cuMFFIMiner` uses shared base-item traversal and
   `cuMultiFuzzyBaseline` provides flat traversal for “cuMFFP-Miner: GPU-Accelerated
   Multiple Fuzzy Frequent Pattern Mining via Shared Base-Item Traversal” by
   Mithun Thangaraj and Rage Uday Kiran, The University of Aizu, Japan.
-
 - **Spatial neighbour pruning:** based on
   [PAMI SpatialECLAT](https://github.com/UdayLab/PAMI/blob/d6d05d9f9134f6039eede0c69b463fc1c2031262/PAMI/georeferencedFrequentPattern/basic/SpatialECLAT.py),
   written by B. Sai Chitra under Professor Rage Uday Kiran, GPL-3.0,
   Copyright (C) 2021 Rage Uday Kiran. cuPAMI uses the shared CUDA Eclat
   bitsets for support counting and CPU neighbour checks for candidate pruning.
-
-## Tutorials
-
-### 1. Pattern mining in binary transactional databases
-
-#### 1.1. Frequent pattern mining
-
-| CUDA |
-|---|
-| [cuApriori](notebooks/frequentPattern/cuApriori.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuApriori.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuEclat](notebooks/frequentPattern/cuEclat.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuEclat.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuFPGrowth](notebooks/frequentPattern/cuFPGrowth.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuFPGrowth.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-
-#### 1.2. OpenCL frequent pattern mining (experimental)
-
-| OpenCL (AMD-compatible GPU runtime required; AMD performance unverified) |
-|---|
-| [clApriori](notebooks/frequentPattern/clApriori.ipynb) <a href="https://colab.research.google.com/github/UdayLab/cuPAMI/blob/main/notebooks/frequentPattern/clApriori.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-
-### 2. Pattern mining in binary temporal databases
-
-#### 2.1. Periodic frequent pattern mining
-
-| CUDA |
-|---|
-| [cuPFApriori](notebooks/periodicFrequentPattern/cuPFApriori.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/cuPFApriori.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuPFEclat](notebooks/periodicFrequentPattern/cuPFEclat.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/cuPFEclat.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [gPF-Miner](notebooks/periodicFrequentPattern/gPFMiner.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/gPFMiner.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuPFGrowth](notebooks/periodicFrequentPattern/cuPFGrowth.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/periodicFrequentPattern/cuPFGrowth.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-
-#### 2.2. Partial periodic pattern mining
-
-| CUDA |
-|---|
-| [cuPPPApriori](notebooks/partialPeriodicPattern/cuPPPApriori.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/partialPeriodicPattern/cuPPPApriori.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuPPPEclat](notebooks/partialPeriodicPattern/cuPPPEclat.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/partialPeriodicPattern/cuPPPEclat.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-
-### 3. Pattern mining in fuzzy databases
-
-#### 3.1. Fuzzy frequent pattern mining
-
-| CUDA |
-|---|
-| [cuFFIMiner](notebooks/fuzzyFrequentPattern/cuFFIMiner.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/fuzzyFrequentPattern/cuFFIMiner.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuMultiFuzzyBaseline](notebooks/fuzzyFrequentPattern/cuMultiFuzzyBaseline.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/fuzzyFrequentPattern/cuMultiFuzzyBaseline.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-| [cuMFFIMiner](notebooks/fuzzyFrequentPattern/cuMFFIMiner.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/fuzzyFrequentPattern/cuMFFIMiner.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
-
-### 4. Pattern mining in geo-referenced databases
-
-#### 4.1. Spatial frequent pattern mining
-
-| CUDA |
-|---|
-| [cuSpatialEclat](notebooks/georeferencedFrequentPattern/cuSpatialEclat.ipynb) <a href="https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/georeferencedFrequentPattern/cuSpatialEclat.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> |
