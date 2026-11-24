@@ -22,6 +22,15 @@ Frequent patterns
    :show-inheritance:
    :special-members: __init__
 
+Coverage patterns
+-----------------
+
+.. autoclass:: cupami.coveragePattern.cuCMine.cuCMine
+   :members:
+   :inherited-members:
+   :show-inheritance:
+   :special-members: __init__
+
 Periodic-frequent patterns
 --------------------------
 

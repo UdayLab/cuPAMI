@@ -182,6 +182,30 @@ combination, not a claim that the spatial paper provides CUDA source.
 The spatial model is Kiran et al., SIGSPATIAL 2020,
 DOI: [10.1145/3397536.3422206](https://doi.org/10.1145/3397536.3422206).
 
+## Coverage patterns
+
+`cuCMine` follows support-ordered, overlap-valid prefix expansion in
+[PAMI CMine](https://github.com/UdayLab/PAMI/blob/48d0c25fb5f1e4ff32e797fa00873033921f1aa7/PAMI/coveragePattern/basic/CMine.py)
+and
+[PAMI cuCMine](https://github.com/UdayLab/PAMI/blob/48d0c25fb5f1e4ff32e797fa00873033921f1aa7/PAMI/coveragePattern/cuda/cuCMine.py),
+GPL-3.0-or-later, Copyright 2021 Rage Uday Kiran.
+The model is Sripada, Reddy and Kiran, *Coverage patterns for efficient banner
+advertisement placement*, WWW Companion 2011,
+DOI: [10.1145/1963192.1963259](https://doi.org/10.1145/1963192.1963259).
+The [SSDBM 2013 treatment](https://www.tkl.iis.u-tokyo.ac.jp/new/uploads/publication_file/file/619/20-5-2013_ssdbm.pdf)
+provides the union coverage and support-ordered overlap definitions.
+
+cuPAMI schedules iterative depth-first frames with bounded GPU extension
+batches rather than PAMI CUDA's breadth-first frontier. Shared `_bitsets`
+kernels build uint32 transaction bitsets and reduce uint64 intersection counts;
+accepted extensions retain GPU unions. Coverage is computed from prefix count
+plus item count minus overlap. Only overlap limits growth; minimum coverage
+filters output. Local differences include lexical ties, ratio validation,
+the existing cuPAMI readers (which omit empty rows and deduplicate items),
+and applying minimum coverage to singleton output. The referenced PAMI code
+returns all eligible singletons. This implementation does not claim CMine++
+pruning or a separately published CUDA algorithm.
+
 ## Shared code, generation, and formats
 
 Existing `_bitsets.py` and `_gpu_io.py` provenance remains

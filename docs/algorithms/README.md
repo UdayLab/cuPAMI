@@ -3,6 +3,7 @@
 Short usage guides for each cuPAMI mining algorithm.
 
 - [cuApriori](cuApriori.md)
+- [cuCMine](cuCMine.md)
 - [clApriori (OpenCL)](clApriori.md)
 - [cuEclat](cuEclat.md)
 - [cuFPGrowth](cuFPGrowth.md)
@@ -21,6 +22,7 @@ Short usage guides for each cuPAMI mining algorithm.
 :hidden:
 
 cuApriori
+cuCMine
 clApriori
 cuEclat
 cuFFIMiner

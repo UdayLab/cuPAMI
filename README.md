@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/cupami)](https://pypi.org/project/cupami/)
 [![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
 
-cuPAMI mines frequent, periodic, fuzzy, and spatial patterns on the GPU.
+cuPAMI mines frequent, periodic, fuzzy, spatial, and coverage patterns on the GPU.
 It is the CUDA companion to [PAMI](https://github.com/UdayLab/PAMI), the main
 pattern-mining library, and targets NVIDIA GPUs. Experimental `clApriori`
 also provides an OpenCL backend for AMD-compatible and other OpenCL GPUs.
@@ -76,6 +76,7 @@ Each algorithm name links to its guide with inputs, parameters, and examples.
 
 | Data | Algorithm | Parameters | Notebook |
 |---|---|---|---|
+| Binary transactional coverage | [`cuCMine`](docs/algorithms/cuCMine.md) | `minRF`, `minCS`, `maxOR` | [Notebook](notebooks/coveragePattern/cuCMine.ipynb) |
 | Binary transactional | [`cuApriori`](docs/algorithms/cuApriori.md) | `minSup` | [Notebook](notebooks/frequentPattern/cuApriori.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuApriori.ipynb) |
 | Binary transactional | [`cuEclat`](docs/algorithms/cuEclat.md) | `minSup` | [Notebook](notebooks/frequentPattern/cuEclat.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuEclat.ipynb) |
 | Binary transactional | [`cuFPGrowth`](docs/algorithms/cuFPGrowth.md) | `minSup` | [Notebook](notebooks/frequentPattern/cuFPGrowth.ipynb) [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/udayRage/cuPAMI/blob/main/notebooks/frequentPattern/cuFPGrowth.ipynb) |

@@ -25,7 +25,7 @@ setuptools.setup(
     version='2026.11.02',
     author='Rage Uday Kiran',
     author_email='uday.rage@gmail.com',
-    description='GPU-accelerated pattern mining with CUDA: frequent, periodic, fuzzy, and spatial patterns',
+    description='GPU-accelerated pattern mining with CUDA: frequent, periodic, fuzzy, spatial, and coverage patterns',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=setuptools.find_packages(include=['cupami', 'cupami.*']),

@@ -5,6 +5,7 @@ from .extras.syntheticDataGenerator import (
     TemporalDatabase, TransactionalDatabase,
 )
 from .frequentPattern import cuApriori, cuEclat, cuFPGrowth, clApriori
+from .coveragePattern import cuCMine
 from .fuzzyFrequentPattern import cuFFIMiner, cuMFFIMiner, cuMultiFuzzyBaseline
 from .georeferencedFrequentPattern import cuSpatialEclat
 from .periodicFrequentPattern import cuPFApriori, cuPFEclat, cuPFGrowth, gPFMiner
@@ -15,6 +16,7 @@ __all__ = [
     "TransactionalDatabase", "TemporalDatabase",
     "BinaryTransactionalDatabase", "QuantitativeTransactionalDatabase",
     "cuApriori", "cuEclat", "cuFPGrowth", "clApriori",
+    "cuCMine",
     "cuPFApriori", "cuPFEclat", "cuPFGrowth", "gPFMiner",
     "cuFFIMiner", "cuMFFIMiner", "cuMultiFuzzyBaseline", "cuSpatialEclat",
     "cuPPPApriori", "cuPPPEclat",
