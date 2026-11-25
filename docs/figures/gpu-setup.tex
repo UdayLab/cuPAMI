@@ -3,17 +3,22 @@
 \input{cupami-style}
 \begin{document}
 \begin{tikzpicture}[canvas]
-\node[ask] (gpu) at (0,0) {\head{NVIDIA\\GPU?}};
-\node[ask] (cuda) at (7,0) {\head{CuPy runs\\on the GPU?}};
-\node[core,text width=4.4cm] (ready) at (14.2,0)
+\node[ask] (gpu) at (0,0) {\head{GPU\\available?}};
+\node[ask] (nvidia) at (6.5,0) {\head{NVIDIA\\GPU?}};
+\node[ask] (cuda) at (13,0) {\head{CuPy runs\\on the GPU?}};
+\node[core,text width=4.4cm] (ready) at (20.2,0)
  {\head{CUDA miners}\\[2pt]\sub{All \texttt{cu*} miners}};
-\node[box,text width=4.8cm] (other) at (0,-3.5)
- {\head{Alternatives}\\[2pt]\sub{OpenCL GPU: \texttt{clApriori}\\(experimental)\\CPU only: PAMI}};
-\node[box,text width=4.8cm] (setup) at (7,-3.5)
+\node[box,text width=4.4cm] (cpu) at (0,-3.5)
+ {\head{CPU only}\\[2pt]\sub{Use PAMI}};
+\node[box,text width=4.4cm] (opencl) at (6.5,-3.5)
+ {\head{OpenCL GPU}\\[2pt]\sub{\texttt{clApriori}\\(experimental)}};
+\node[box,text width=4.8cm] (setup) at (13,-3.5)
  {\head{Set up CUDA}\\[2pt]\sub{Install the NVIDIA driver,\\CUDA runtime and CuPy,\\then check again}};
-\draw[flow] (gpu.east) -- node[note,above] {yes} (cuda.west);
+\draw[flow] (gpu.east) -- node[note,above] {yes} (nvidia.west);
+\draw[flow] (nvidia.east) -- node[note,above] {yes} (cuda.west);
 \draw[flow] (cuda.east) -- node[note,above] {yes} (ready.west);
-\draw[flow] (gpu.south) -- node[note,right] {no} (other.north);
+\draw[flow] (gpu.south) -- node[note,right] {no} (cpu.north);
+\draw[flow] (nvidia.south) -- node[note,right] {no} (opencl.north);
 \draw[flow] (cuda.south) -- node[note,right] {no} (setup.north);
 \end{tikzpicture}
 \end{document}

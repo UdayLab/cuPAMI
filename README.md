@@ -97,7 +97,7 @@ contain `(support, periodicity)`.
 
 ## Choosing a backend
 
-![Flowchart for choosing between the CUDA miners, clApriori on OpenCL, and PAMI on the CPU](docs/figures/gpu-setup.svg)
+![Flowchart: check for a GPU, then whether it is NVIDIA, then whether CuPy runs; leads to PAMI on the CPU, clApriori on OpenCL, or the CUDA miners](docs/figures/gpu-setup.svg)
 
 *Figure 2. Choosing a backend.*
 
